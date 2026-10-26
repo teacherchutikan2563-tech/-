@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interactive Quadratic Function M.5</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,"Noto Sans Thai",sans-serif;background:#edf6ff;color:#17324d}
+.wrap{max-width:1180px;margin:auto;padding:20px}.hero,.card{background:#fff;border-radius:20px;box-shadow:0 6px 22px #17324d18}
+.hero{padding:22px;margin-bottom:16px}.hero h1{margin:0;color:#1261a0}.hero p{margin:7px 0 0;color:#60778c}
+.grid{display:grid;grid-template-columns:320px 1fr;gap:16px}.card{padding:18px}
+h2{margin:0 0 12px;color:#1261a0;font-size:21px}.section{margin-top:16px}
+label{display:flex;justify-content:space-between;margin:14px 0 7px;font-weight:bold}
+input[type=range]{width:100%;accent-color:#1676c5}.val{color:#1261a0}
+.formula{padding:13px;border-radius:12px;background:#edf7ff;text-align:center;font-size:21px;font-weight:bold;margin:14px 0}
+.info{background:#f6fafc;border-left:4px solid #1676c5;border-radius:8px;padding:11px;margin-top:10px}
+canvas{display:block;width:100%;height:auto;border:1px solid #d7e3ec;border-radius:14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.stat{background:#f7fafc;border-radius:11px;padding:10px;text-align:center}.stat b{display:block;color:#1261a0;font-size:18px}
+table{width:100%;border-collapse:collapse;margin-top:8px}th,td{padding:8px;border-bottom:1px solid #dce7ef;text-align:center}th{background:#eef7ff}
+button{border:0;border-radius:10px;padding:10px 14px;background:#1676c5;color:#fff;font-weight:bold;cursor:pointer;margin:4px}.secondary{background:#647b8d}.success{background:#287a50}
+.task{padding:14px;background:#f7fafc;border-radius:13px;margin:10px 0}.task input{width:100%;padding:10px;border:1px solid #c8d7e2;border-radius:9px;margin:7px 0;font-size:16px}
+.feedback{font-weight:bold;margin-top:8px;min-height:22px}.answer{display:none;color:#176b3a;background:#effaf3;padding:10px;border-radius:9px;margin-top:8px}
+.badge{display:inline-block;padding:5px 9px;background:#e5f3ff;color:#1261a0;border-radius:20px;font-size:13px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+<span class="badge">คณิตศาสตร์เพิ่มเติม • ม.5</span>
+<h1>สำรวจฟังก์ชันกำลังสองแบบโต้ตอบ</h1>
+<p>ทดลอง ปรับค่า วิเคราะห์กราฟ และทำภารกิจตรวจความเข้าใจด้วยตนเอง</p>
+</section>
+
+<div class="grid">
+<div>
+<div class="card">
+<h2>1. ทดลองปรับพารามิเตอร์</h2>
+<label>ค่า a <span class="val" id="aVal">1</span></label>
+<input id="a" type="range" min="-3" max="3" step=".5" value="1">
+<small>a ควบคุมทิศทางการเปิดและความกว้างของพาราโบลา</small>
+<label>ค่า b <span class="val" id="bVal">0</span></label>
+<input id="b" type="range" min="-6" max="6" step=".5" value="0">
+<small>b มีผลต่อตำแหน่งแกนสมมาตร</small>
+<label>ค่า c <span class="val" id="cVal">0</span></label>
+<input id="c" type="range" min="-6" max="6" step="1" value="0">
+<small>c คือจุดตัดแกน y</small>
+<div class="formula" id="formula">y = x²</div>
+<button id="reset" class="secondary">รีเซ็ต</button>
+</div>
+
+<div class="card section">
+<h2>2. วิเคราะห์องค์ประกอบสำคัญ</h2>
+<div class="stats">
+<div class="stat">จุดยอด<b id="vertex">—</b></div>
+<div class="stat">แกนสมมาตร<b id="axis">—</b></div>
+<div class="stat">จุดตัดแกน y<b id="yint">—</b></div>
+<div class="stat">ทิศทาง<b id="direction">—</b></div>
+</div>
+<div class="info" id="tip">ลองเปลี่ยนค่า a, b และ c แล้วสังเกตความสัมพันธ์</div>
+</div>
+</div>
+
+<div class="card">
+<h2>3. กราฟแบบ Real-time</h2>
+<canvas id="graph" width="760" height="520"></canvas>
+<div class="info" id="obs" aria-live="polite"></div>
+
+<h2 class="section">4. ตารางค่าฟังก์ชัน</h2>
+<table><thead><tr><th>x</th><th>y = ax² + bx + c</th></tr></thead><tbody id="tableBody"></tbody></table>
+</div>
+</div>
+
+<div class="card section">
+<h2>5. ภารกิจท้าทาย: ทายกราฟ</h2>
+<p>กำหนดฟังก์ชันเป้าหมาย แล้วให้นักเรียนหาค่า <b>a, b, c</b> ที่ถูกต้อง</p>
+<div class="task">
+<b>ภารกิจที่ 1</b> จงสร้างกราฟ <b>y = 2x² + 4x - 3</b>
+<input id="qa" placeholder="ค่า a">
+<input id="qb" placeholder="ค่า b">
+<input id="qc" placeholder="ค่า c">
+<button class="check" data-target="2,4,-3">ตรวจคำตอบ</button>
+<div class="feedback" id="f1"></div>
+</div>
+<div class="task">
+<b>ภารกิจที่ 2</b> จงสร้างกราฟ <b>y = -x² + 2x + 3</b>
+<input id="da" placeholder="ค่า a">
+<input id="db" placeholder="ค่า b">
+<input id="dc" placeholder="ค่า c">
+<button class="check" data-target="-1,2,3">ตรวจคำตอบ</button>
+<div class="feedback" id="f2"></div>
+</div>
+</div>
+
+<div class="card section">
+<h2>6. แบบประเมินท้ายกิจกรรม</h2>
+<p>ตอบคำถามในช่องว่าง แล้วกด <b>ตรวจคำตอบ</b> ระบบจะแสดงผลทันที</p>
+
+<div class="task">
+<b>ข้อ 1.</b> ถ้า a เปลี่ยนจาก 2 เป็น -2 กราฟจะเปลี่ยนจากเปิดขึ้นเป็น __________ และความกว้างของกราฟ __________
+<input id="e1a" placeholder="คำตอบข้อ 1 เช่น เปิดลง">
+<input id="e1b" placeholder="คำตอบข้อ 1 เช่น เท่าเดิม">
+<button class="checkEval" data-q="1">ตรวจคำตอบ</button>
+<div class="feedback" id="ef1"></div>
+<div class="answer" id="ea1">เฉลย: เปิดลง และเท่าเดิม เพราะ |a| เท่ากัน</div>
+</div>
+
+<div class="task">
+<b>ข้อ 2.</b> ฟังก์ชัน y = 3x² - 6x + 1 มีแกนสมมาตรอยู่ที่ x = __________
+<input id="e2" type="number" step="any" placeholder="กรอกค่าของ x">
+<button class="checkEval" data-q="2">ตรวจคำตอบ</button>
+<div class="feedback" id="ef2"></div>
+<div class="answer" id="ea2">เฉลย: x = 1 เพราะ x = -b/(2a) = 6/6 = 1</div>
+</div>
+
+<div class="task">
+<b>ข้อ 3.</b> ใน y = ax² + bx + c ค่า c บอกข้อมูลใดของกราฟ?
+<input id="e3" placeholder="พิมพ์คำตอบ เช่น จุดตัดแกน y">
+<button class="checkEval" data-q="3">ตรวจคำตอบ</button>
+<div class="feedback" id="ef3"></div>
+<div class="answer" id="ea3">เฉลย: จุดตัดแกน y คือ (0,c)</div>
+</div>
+
+<div class="task" style="background:#eef7ff">
+<b>คะแนนแบบประเมิน</b>
+<div style="font-size:28px;font-weight:bold;color:#1261a0;margin:8px 0"><span id="evalScore">0</span> / 3</div>
+<div id="evalSummary" class="muted">ตอบให้ครบทั้ง 3 ข้อ แล้วตรวจคำตอบ</div>
+<button id="resetEval" class="secondary" type="button">ล้างคำตอบ</button>
+</div>
+</div>
+</div>
+
+<script>
+const A=document.getElementById("a"),B=document.getElementById("b"),C=document.getElementById("c");
+const canvas=document.getElementById("graph"),ctx=canvas.getContext("2d");
+function clean(n){return Math.abs(n)<1e-9?0:Number(n.toFixed(2))}
+function fmt(n){n=clean(n);return String(n).replace(".0","")}
+function equation(a,b,c){
+ let s="y = ";
+ if(a===0)s+="0";else s+=(a===1?"x²":a===-1?"-x²":fmt(a)+"x²");
+ if(b>0)s+=" + "+(b===1?"x":fmt(b)+"x");else if(b<0)s+=" - "+(Math.abs(b)===1?"x":fmt(Math.abs(b))+"x");
+ if(c>0)s+=" + "+fmt(c);else if(c<0)s+=" - "+fmt(Math.abs(c));
+ return s;
+}
+function draw(){
+ let a=Number(A.value),b=Number(B.value),c=Number(C.value);
+ document.getElementById("aVal").textContent=fmt(a);document.getElementById("bVal").textContent=fmt(b);document.getElementById("cVal").textContent=fmt(c);
+ document.getElementById("formula").textContent=equation(a,b,c);
+ const W=canvas.width,H=canvas.height,L=58,R=22,T=25,Btm=48,xmin=-7,xmax=7,ymin=-10,ymax=10;
+ const X=x=>L+(x-xmin)*(W-L-R)/(xmax-xmin),Y=y=>H-Btm-(y-ymin)*(H-T-Btm)/(ymax-ymin);
+ ctx.clearRect(0,0,W,H);ctx.font="13px Tahoma";
+ ctx.strokeStyle="#e1e9ef";ctx.lineWidth=1;
+ for(let x=-7;x<=7;x++){ctx.beginPath();ctx.moveTo(X(x),Y(ymin));ctx.lineTo(X(x),Y(ymax));ctx.stroke()}
+ for(let y=-10;y<=10;y++){ctx.beginPath();ctx.moveTo(X(xmin),Y(y));ctx.lineTo(X(xmax),Y(y));ctx.stroke()}
+ ctx.strokeStyle="#314c61";ctx.lineWidth=2;
+ ctx.beginPath();ctx.moveTo(X(0),Y(ymin));ctx.lineTo(X(0),Y(ymax));ctx.stroke();
+ ctx.beginPath();ctx.moveTo(X(xmin),Y(0));ctx.lineTo(X(xmax),Y(0));ctx.stroke();
+ ctx.fillStyle="#314c61";
+ for(let x=-7;x<=7;x++)if(x)ctx.fillText(x,X(x)-4,Y(0)+19);
+ for(let y=-10;y<=10;y+=2)if(y)ctx.fillText(y,X(0)+8,Y(y)+4);
+ if(a!==0){
+   const xv=-b/(2*a),yv=a*xv*xv+b*xv+c;
+   ctx.strokeStyle="#1676c5";ctx.lineWidth=4;ctx.beginPath();let started=false;
+   for(let i=0;i<=700;i++){let x=xmin+(xmax-xmin)*i/700,y=a*x*x+b*x+c;
+     if(y<ymin||y>ymax){started=false;continue}
+     if(!started){ctx.moveTo(X(x),Y(y));started=true}else ctx.lineTo(X(x),Y(y))}
+   ctx.stroke();
+   ctx.strokeStyle="#d95f02";ctx.setLineDash([7,6]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(X(xv),Y(ymin));ctx.lineTo(X(xv),Y(ymax));ctx.stroke();ctx.setLineDash([]);
+   ctx.fillStyle="#d95f02";ctx.beginPath();ctx.arc(X(xv),Y(yv),6,0,Math.PI*2);ctx.fill();
+   document.getElementById("vertex").textContent=`(${fmt(xv)}, ${fmt(yv)})`;
+   document.getElementById("axis").textContent=`x = ${fmt(xv)}`;
+   document.getElementById("direction").textContent=a>0?"เปิดขึ้น":"เปิดลง";
+   document.getElementById("tip").textContent=Math.abs(a)>1?"|a| มากกว่า 1 → กราฟแคบลง":Math.abs(a)<1?"|a| น้อยกว่า 1 → กราฟกว้างขึ้น":"|a| = 1 → รูปแบบมาตรฐาน";
+ }else{
+   document.getElementById("vertex").textContent="ไม่มี";document.getElementById("axis").textContent="ไม่มี";document.getElementById("direction").textContent="เส้นตรง";
+   document.getElementById("tip").textContent="เมื่อ a = 0 สมการไม่ใช่ฟังก์ชันกำลังสอง";
+ }
+ document.getElementById("yint").textContent=`(0, ${fmt(c)})`;
+ document.getElementById("obs").textContent=`${equation(a,b,c)} | ลองปรับ Slider แล้วสังเกตจุดยอดและแกนสมมาตร`;
+ const tb=document.getElementById("tableBody");tb.innerHTML="";
+ [-3,-2,-1,0,1,2,3].forEach(x=>{let y=a*x*x+b*x+c;let tr=document.createElement("tr");tr.innerHTML=`<td>${x}</td><td>${fmt(y)}</td>`;tb.appendChild(tr)});
+}
+[A,B,C].forEach(e=>e.addEventListener("input",draw));
+document.getElementById("reset").addEventListener("click",()=>{A.value=1;B.value=0;C.value=0;draw()});
+let evalScore=0;
+const evalDone={1:false,2:false,3:false};
+function normText(s){return String(s||"").trim().toLowerCase().replace(/\\s+/g,"");}
+document.querySelectorAll(".checkEval").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const q=Number(btn.dataset.q);
+    let ok=false;
+    if(q===1){
+      const x=normText(document.getElementById("e1a").value);
+      const y=normText(document.getElementById("e1b").value);
+      ok=(x.includes("เปิดลง")||x==="ลง")&&(y.includes("เท่าเดิม")||y.includes("เท่ากัน"));
+    }else if(q===2){
+      ok=Math.abs(Number(document.getElementById("e2").value)-1)<1e-9;
+    }else{
+      const x=normText(document.getElementById("e3").value);
+      ok=x.includes("จุดตัดแกนy")||x.includes("จุดตัดแกนyคือ(0,c)")||x.includes("จุดตัดแกนy(0,c)");
+    }
+    const f=document.getElementById("ef"+q);
+    f.textContent=ok?"✓ ถูกต้อง!":"✗ ยังไม่ถูก ลองตรวจสอบแนวคิดจากการทดลองอีกครั้ง";
+    f.style.color=ok?"#176b3a":"#a43b2b";
+    if(ok && !evalDone[q]){evalDone[q]=true;evalScore++;}
+    document.getElementById("evalScore").textContent=evalScore;
+    document.getElementById("evalSummary").textContent=evalScore===3?"🎉 ผ่านแบบประเมินครบทั้ง 3 ข้อแล้ว!":"ทำได้ "+evalScore+" จาก 3 ข้อ";
+    document.getElementById("ea"+q).style.display=ok?"none":"block";
+  });
+});
+document.getElementById("resetEval").addEventListener("click",()=>{
+  ["e1a","e1b","e2","e3"].forEach(id=>document.getElementById(id).value="");
+  [1,2,3].forEach(q=>{
+    evalDone[q]=false;
+    document.getElementById("ef"+q).textContent="";
+    document.getElementById("ea"+q).style.display="none";
+  });
+  evalScore=0;
+  document.getElementById("evalScore").textContent="0";
+  document.getElementById("evalSummary").textContent="ตอบให้ครบทั้ง 3 ข้อ แล้วตรวจคำตอบ";
+});
+document.querySelectorAll(".check").forEach((btn,i)=>{
+ btn.addEventListener("click",()=>{
+  let ids=i===0?["qa","qb","qc"]:["da","db","dc"];let vals=ids.map(id=>Number(document.getElementById(id).value));
+  let target=btn.dataset.target.split(",").map(Number),ok=vals.every((v,j)=>v===target[j]);
+  let f=document.getElementById(i===0?"f1":"f2");
+  f.textContent=ok?"✓ ถูกต้อง! สามารถสร้างกราฟเป้าหมายได้แล้ว":"ยังไม่ถูก ลองตรวจสอบค่า a, b และ c อีกครั้ง";
+  f.style.color=ok?"#176b3a":"#a43b2b";
+ });
+});
+draw();
+</script>
+</body>
+</html>
